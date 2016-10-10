@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		* {
+			margin: 0;
+			font-family: 'Helvetica';
+		}
+
+	</style>
+
+	<script id="earth-vertex-shader" type="x-shader/x-vertex">
+	precision mediump float;
+	attribute vec4 vPosition;
+
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform vec3 vCenter;
+
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	varying vec4 fPosition;
+
+	void main() {
+		vNormal = normalize(vPosition.xyz - (vCenter).xyz);
+		vec3 pos = -(modelViewMatrix * vPosition).xyz;
+        vec3 light = vec3(0.0, 0.0, 0.0);
+        L = normalize(light - pos);
+        E = normalize(-pos);
+        H = normalize(L + E);
+        NN = vNormal;
+        N = normalize( (modelViewMatrix*vec4(NN, 0)).xyz);
+
+
+		gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+		fPosition = vPosition;
+	}
+	</script>
+
+	<script id="earth-fragment-shader" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec4 fPosition;
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+
+	uniform mat4 modelViewMatrix;
+
+	uniform samplerCube texMap;
+
+
+	void main() {
+		float shininess = 100.0;
+		float ka = 0.0;
+		float ks = 0.5;
+		float kd = 1.0;
+
+		float ambient = ka;	
+		float diffuse = kd * max(dot(L, N), 0.0);
+		float specular = ks * pow(max(dot(N, H), 0.0), shininess);
+		if(dot(L, N) < 0.0) {
+			specular = 0.0;
+		}
+
+
+		vec4 texColor = textureCube(texMap, (modelViewMatrix * vec4(N, 0.0)).xyz);
+
+		vec4 fColor = texColor * ((ambient + diffuse) + vec4(1.0) * specular);
+		fColor.a = 1.0;
+		gl_FragColor = fColor;
+	}
+	</script>
+
+	<script id="mercury-vertex-shader" type="x-shader/x-vertex">
+	precision mediump float;
+	attribute vec4 vPosition;
+
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform vec3 vCenter;
+
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	varying vec4 fPosition;
+
+	void main() {
+		vNormal = normalize(vPosition.xyz - (vCenter).xyz);
+		vec3 pos = -(modelViewMatrix * vPosition).xyz;
+        vec3 light = vec3(0.0, 0.0, 0.0);
+        L = normalize(light - pos);
+        E = normalize(-pos);
+        H = normalize(L + E);
+        NN = vNormal;
+        N = normalize( (modelViewMatrix*vec4(NN, 0)).xyz);
+
+
+		gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+		fPosition = vPosition;
+	}
+	</script>
+
+	<script id="mercury-fragment-shader" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec4 fPosition;
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	uniform mat4 modelViewMatrix;
+
+	uniform samplerCube texMap;
+
+
+	void main() {
+		float shininess = 100.0;
+		float ka = 0.1;
+		float ks = 0.5;
+		float kd = 1.0;
+
+		float ambient = ka;
+		float diffuse = kd * max(dot(L, N), 0.0);
+		float specular = ks * pow(max(dot(N, H), 0.0), shininess);
+		if(dot(L, N) < 0.0) {
+			specular = 0.0;
+		}
+
+
+		vec4 texColor = textureCube(texMap, (modelViewMatrix * vec4(N, 0.0)).xyz);
+
+		vec4 fColor = (ambient + diffuse + specular) * texColor;
+		fColor.a = 1.0;
+		gl_FragColor = fColor;
+	}
+	</script>
+
+	<script id="venus-vertex-shader" type="x-shader/x-vertex">
+	precision mediump float;
+	attribute vec4 vPosition;
+
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform vec3 vCenter;
+
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	varying vec4 fPosition;
+
+	void main() {
+		vNormal = normalize(vPosition.xyz - (vCenter).xyz);
+		vec3 pos = -(modelViewMatrix * vPosition).xyz;
+        vec3 light = vec3(0.0, 0.0, 0.0);
+        L = normalize(light - pos);
+        E = normalize(-pos);
+        H = normalize(L + E);
+        NN = vNormal;
+        N = normalize( (modelViewMatrix*vec4(NN, 0)).xyz);
+
+
+		gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+		fPosition = vPosition;
+	}
+	</script>
+
+	<script id="venus-fragment-shader" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec4 fPosition;
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	uniform mat4 modelViewMatrix;
+
+	uniform samplerCube texMap;
+
+
+	void main() {
+		float shininess = 100.0;
+		float ka = 0.1;
+		float ks = 0.5;
+		float kd = 1.0;
+
+		float ambient = ka;
+		float diffuse = kd * max(dot(L, N), 0.0);
+		float specular = ks * pow(max(dot(N, H), 0.0), shininess);
+		if(dot(L, N) < 0.0) {
+			specular = 0.0;
+		}
+
+
+		vec4 texColor = textureCube(texMap, (modelViewMatrix * vec4(N, 0.0)).xyz);
+
+		vec4 fColor = (ambient + diffuse + specular) * texColor;
+		fColor.a = 1.0;
+		gl_FragColor = fColor;
+	}
+	</script>
+
+
+	<script id="mars-vertex-shader" type="x-shader/x-vertex">
+	precision mediump float;
+	attribute vec4 vPosition;
+
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform vec3 vCenter;
+
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	varying vec4 fPosition;
+
+	void main() {
+		vNormal = normalize(vPosition.xyz - (vCenter).xyz);
+		vec3 pos = -(modelViewMatrix * vPosition).xyz;
+        vec3 light = vec3(0.0, 0.0, 0.0);
+        L = normalize(light - pos);
+        E = normalize(-pos);
+        H = normalize(L + E);
+        NN = vNormal;
+        N = normalize( (modelViewMatrix*vec4(NN, 0)).xyz);
+
+
+		gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+		fPosition = vPosition;
+	}
+	</script>
+
+	<script id="mars-fragment-shader" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec4 fPosition;
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	uniform mat4 modelViewMatrix;
+
+	uniform samplerCube texMap;
+
+
+	void main() {
+		float shininess = 100.0;
+		float ka = 0.1;
+		float ks = 0.5;
+		float kd = 1.0;
+
+		float ambient = ka;
+		float diffuse = kd * max(dot(L, N), 0.0);
+		float specular = ks * pow(max(dot(N, H), 0.0), shininess);
+		if(dot(L, N) < 0.0) {
+			specular = 0.0;
+		}
+
+
+		vec4 texColor = textureCube(texMap, (modelViewMatrix * vec4(N, 0.0)).xyz);
+
+		vec4 fColor = (ambient + diffuse + specular) * texColor;
+		fColor.a = 1.0;
+		gl_FragColor = fColor;
+	}
+	</script>
+
+	<script id="jupiter-vertex-shader" type="x-shader/x-vertex">
+	precision mediump float;
+	attribute vec4 vPosition;
+
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform vec3 vCenter;
+
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	varying vec4 fPosition;
+
+	void main() {
+		vNormal = normalize(vPosition.xyz - (vCenter).xyz);
+		vec3 pos = -(modelViewMatrix * vPosition).xyz;
+        vec3 light = vec3(0.0, 0.0, 0.0);
+        L = normalize(light - pos);
+        E = normalize(-pos);
+        H = normalize(L + E);
+        NN = vNormal;
+        N = normalize( (modelViewMatrix*vec4(NN, 0.0)).xyz);
+
+
+		gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+		fPosition = vPosition;
+	}
+	</script>
+
+	<script id="jupiter-fragment-shader" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec4 fPosition;
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	uniform mat4 modelViewMatrix;
+
+	uniform samplerCube texMap;
+
+
+	void main() {
+		float shininess = 100.0;
+		float ka = 0.1;
+		float ks = 0.5;
+		float kd = 1.0;
+
+		float ambient = ka;
+		float diffuse = kd * max(dot(L, N), 0.0);
+		float specular = ks * pow(max(dot(N, H), 0.0), shininess);
+		if(dot(L, N) < 0.0) {
+			specular = 0.0;
+		}
+
+
+		vec4 texColor = textureCube(texMap, (modelViewMatrix * vec4(N, 0.0)).xyz);
+
+		vec4 fColor = (ambient + diffuse + specular) * texColor;
+		fColor.a = 1.0;
+		gl_FragColor = fColor;
+	}
+	</script>
+
+	<script id="saturn-vertex-shader" type="x-shader/x-vertex">
+	precision mediump float;
+	attribute vec4 vPosition;
+
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform vec3 vCenter;
+
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	varying vec4 fPosition;
+
+	void main() {
+		vNormal = normalize(vPosition.xyz - (vCenter).xyz);
+		vec3 pos = -(modelViewMatrix * vPosition).xyz;
+        vec3 light = vec3(0.0, 0.0, 0.0);
+        L = normalize(light - pos);
+        E = normalize(-pos);
+        H = normalize(L + E);
+        NN = vNormal;
+        N = normalize( (modelViewMatrix*vec4(NN, 0.0)).xyz);
+
+
+		gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+		fPosition = vPosition;
+	}
+	</script>
+
+	<script id="saturn-fragment-shader" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec4 fPosition;
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	uniform mat4 modelViewMatrix;
+
+	uniform samplerCube texMap;
+
+
+	void main() {
+		float shininess = 100.0;
+		float ka = 0.1;
+		float ks = 0.5;
+		float kd = 1.0;
+
+		float ambient = ka;
+		float diffuse = kd * max(dot(L, N), 0.0);
+		float specular = ks * pow(max(dot(N, H), 0.0), shininess);
+		if(dot(L, N) < 0.0) {
+			specular = 0.0;
+		}
+
+
+		vec4 texColor = textureCube(texMap, (modelViewMatrix * vec4(N, 0.0)).xyz);
+
+		vec4 fColor = (ambient + diffuse + specular) * texColor;
+		fColor.a = 1.0;
+		gl_FragColor = fColor;
+	}
+	</script>
+
+
+	<script id="sun-vertex-shader" type="x-shader/x-vertex">
+	precision mediump float;
+	attribute vec4 vPosition;
+
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform vec3 vCenter;
+
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	varying vec4 fPosition;
+
+	void main() {
+		vNormal = normalize(vPosition.xyz - (vCenter).xyz);
+		vec3 pos = -(modelViewMatrix * vPosition).xyz;
+        vec3 light = vec3(0.0, 0.0, 0.0);
+        L = normalize(light - pos);
+        E = normalize(-pos);
+        H = normalize(L + E);
+        NN = vNormal;
+        N = normalize( (modelViewMatrix*vec4(NN, 0.0)).xyz);
+
+
+		gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+		fPosition = vPosition;
+	}
+	</script>
+
+	<script id="sun-fragment-shader" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec4 fPosition;
+	varying vec3 vNormal;
+	varying vec3 N, L, E, NN, H;
+	uniform mat4 modelViewMatrix;
+
+	uniform samplerCube texMap;
+
+
+	void main() {
+		float shininess = 100.0;
+		float ka = 0.1;
+		float ks = 0.5;
+		float kd = 1.0;
+
+		float ambient = ka;
+		float diffuse = kd * max(dot(L, N), 0.0);
+		float specular = ks * pow(max(dot(N, H), 0.0), shininess);
+		if(dot(L, N) < 0.0) {
+			specular = 0.0;
+		}
+
+
+		vec4 texColor = textureCube(texMap, (modelViewMatrix * vec4(N, 0.0)).xyz);
+
+		vec4 fColor = (ambient + diffuse + specular) * texColor;
+		fColor.a = 1.0;
+		gl_FragColor = fColor;
+	}
+	</script>
+
+	<script type="text/javascript" src="Common/webgl-utils.js"></script>
+	<script type="text/javascript" src="Common/initShaders.js"></script>
+	<script type="text/javascript" src="Common/MV.js"></script>
+	<script type="text/javascript" src="planets.js"></script>
+</head>
+<body background="http://www.hdwallpaperscool.com/wp-content/uploads/2013/12/space-galaxy-hd-walppapers-cool-desktop-images-widescreen.jpg">
+	<canvas id="gl-canvas" width="1024" height="512" tabIndex="1" style="margin: 0; float: left; background: url(bg.jpg) no-repeat center center;">
+	Oops ... your browser doesn't support the HTML5 canvas element
+	</canvas>
+	<div style="float: left; width: 320px;">
+		<p>
+			<font size = "4" color="white" face="calibri"><b><br>
+			&nbsp; &nbsp;CONTROLS:</b></font><br><br>
+			<font face ="verdana" color="white" size="3">
+			<ul>
+				<li>Press SPACEBAR to toggle between top and side views</li><br>
+				<li>Rotate the scene using your MOUSE</li><br>
+				<li>Look around using the ARROW KEYS</li><br>
+				<li>Track a planet and change orbit speeds using the options below</li><br>
+			</ul>
+		</p><br>
+		<hr><br>
+
+		&nbsp;&nbsp;&nbsp;&nbsp;Choose a planet to track : &nbsp;
+		<select id="track_planet">
+			<option value="-1">None</option>
+			<option value="0">Sun</option>
+			<option value="1">Mercury</option>
+			<option value="2">Venus</option>
+			<option value="3">Earth</option>
+			<option value="4">Mars</option>
+			<option value="5">Jupiter</option>
+			<option value="6">Saturn</option>
+		</select>
+		<br><br>
+		&nbsp;&nbsp;&nbsp;&nbsp;Choose a speed:
+		<input id="speed" type="number" min="0" max="5" value="1">
+		</font><br><br><br>
+		<hr><br>
+		<p align="center"><font size="2" color="#6B8998"> © 2014</font></p>
+	</div>
+
+</body>
+</html>
